@@ -10,8 +10,8 @@ from app.routers import (
     sentiment,
     comments,
     bookmarks,
-    read_later,
-    feedback,
+    read_laters,
+    feedbacks,
 )
 
 # --------------------------------------------------
@@ -59,8 +59,8 @@ app.include_router(summary.router, prefix="/api/summary", tags=["Summary"])
 app.include_router(sentiment.router, prefix="/api/sentiment", tags=["Sentiment"])
 app.include_router(comments.router, prefix="/api/comments", tags=["Comments"])
 app.include_router(bookmarks.router, prefix="/api/bookmarks", tags=["Bookmarks"])
-app.include_router(read_later.router, prefix="/api/read-later", tags=["Read Later"])
-app.include_router(feedback.router, prefix="/api/feedback", tags=["Feedback"])
+app.include_router(read_laters.router, prefix="/api/read-later", tags=["Read Later"])
+app.include_router(feedbacks.router, prefix="/api/feedback", tags=["Feedback"])
 
 @app.on_event("startup")
 async def startup_event():
