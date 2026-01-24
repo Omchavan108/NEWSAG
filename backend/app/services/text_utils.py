@@ -9,8 +9,12 @@ async def extract_article_text(url: str) -> str:
     Uses simple paragraph-based extraction for clarity.
     """
 
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    }
+
     async with httpx.AsyncClient(timeout=10.0) as client:
-        response = await client.get(url)
+        response = await client.get(url, headers=headers)
 
     if response.status_code != 200:
         raise Exception("Failed to fetch article content")
