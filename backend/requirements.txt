@@ -4,7 +4,8 @@ python-dotenv
 httpx
 motor
 pydantic
+email-validator
 cachetools
-nltk
-scikit-learn
 numpy
+scikit-learn
+beautifulsoup4
