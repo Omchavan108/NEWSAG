@@ -11,7 +11,6 @@ class CommentModel(MongoBase):
 
     article_id: str
     article_title: str
-    user_name: str
-    user_email: Optional[str] = None
+    
     text: str
     created_at: datetime = Field(default_factory=datetime.utcnow)

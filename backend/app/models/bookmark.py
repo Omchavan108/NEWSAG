@@ -8,7 +8,7 @@ class BookmarkModel(MongoBase):
     Bookmark model for saving articles.
     """
 
-    user_id: str
+    
     article_id: str
     title: str
     source: str

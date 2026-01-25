@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.core.database import get_db
 from app.models.bookmark import BookmarkModel
 from bson import ObjectId
+from app.core.auth import get_current_user
+
 
 router = APIRouter()
 
@@ -10,37 +12,47 @@ router = APIRouter()
 # ADD BOOKMARK
 # --------------------------------------------------
 @router.post("/")
-async def add_bookmark(bookmark: BookmarkModel, db=Depends(get_db)):
-    """
-    Save an article to user's bookmarks.
-    """
+async def add_bookmark(
+    bookmark: BookmarkModel,
+    user=Depends(get_current_user),
+    db=Depends(get_db),
+):
+    user_id = user["user_id"]
 
     existing = await db.bookmarks.find_one({
-        "user_id": bookmark.user_id,
+        "user_id": user_id,
         "article_id": bookmark.article_id
     })
 
     if existing:
         raise HTTPException(status_code=400, detail="Already bookmarked")
 
-    result = await db.bookmarks.insert_one(bookmark.dict())
+    data = bookmark.dict()
+    data["user_id"] = user_id
+
+    result = await db.bookmarks.insert_one(data)
+
     return {
         "message": "Bookmark added",
         "bookmark_id": str(result.inserted_id)
     }
 
 
+
 # --------------------------------------------------
 # GET USER BOOKMARKS
 # --------------------------------------------------
-@router.get("/{user_id}")
-async def get_bookmarks(user_id: str, db=Depends(get_db)):
-    """
-    Fetch all bookmarks for a user.
-    """
+@router.get("/")
+async def get_bookmarks(
+    user=Depends(get_current_user),
+    db=Depends(get_db),
+):
+    user_id = user["user_id"]
 
     bookmarks = []
-    cursor = db.bookmarks.find({"user_id": user_id}).sort("created_at", -1)
+    cursor = db.bookmarks.find(
+        {"user_id": user_id}
+    ).sort("created_at", -1)
 
     async for item in cursor:
         bookmarks.append(BookmarkModel(**item))
@@ -51,22 +63,28 @@ async def get_bookmarks(user_id: str, db=Depends(get_db)):
     }
 
 
+
 # --------------------------------------------------
 # REMOVE BOOKMARK
 # --------------------------------------------------
 @router.delete("/{bookmark_id}")
-async def delete_bookmark(bookmark_id: str, db=Depends(get_db)):
-    """
-    Remove a bookmark by ID.
-    """
-    
-    # Validate ObjectId format
-    if not ObjectId.is_valid(bookmark_id):
-        raise HTTPException(status_code=400, detail="Invalid bookmark ID format")
-    
-    result = await db.bookmarks.delete_one({"_id": ObjectId(bookmark_id)})
+async def delete_bookmark(
+    bookmark_id: str,
+    user=Depends(get_current_user),
+    db=Depends(get_db),
+):
+    user_id = user["user_id"]
+
+    result = await db.bookmarks.delete_one({
+        "_id": ObjectId(bookmark_id),
+        "user_id": user_id
+    })
 
     if result.deleted_count == 0:
-        raise HTTPException(status_code=404, detail="Bookmark not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Bookmark not found or not authorized"
+        )
 
     return {"message": "Bookmark removed"}
+

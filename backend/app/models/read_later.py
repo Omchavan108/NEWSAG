@@ -8,7 +8,7 @@ class ReadLaterModel(MongoBase):
     Read Later model for deferred articles.
     """
 
-    user_id: str
+    
     article_id: str
     title: str
     source: str
