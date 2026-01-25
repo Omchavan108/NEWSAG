@@ -14,6 +14,7 @@ async def generate_summary(article_url: str):
     """
     Generate summary for a given article URL.
     Uses extractive NLP-based summarization (no AI).
+    Fallback: returns placeholder for paywall-protected content.
     """
 
     cache_key = "summary:" + hashlib.md5(article_url.encode()).hexdigest()
@@ -31,19 +32,22 @@ async def generate_summary(article_url: str):
     # --------------------------------------------------
     # 2. Fetch article content
     # --------------------------------------------------
+    article_text = None
     try:
         article_text = await extract_article_text(article_url)
     except Exception as exc:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Unable to extract article text: {exc}"
-        )
+        # Log the error but don't fail - return placeholder
+        print(f"[Summary] Failed to extract text from {article_url}: {exc}")
+        article_text = None
 
-    if len(article_text) < 300:
-        raise HTTPException(
-            status_code=400,
-            detail="Article content too short to summarize"
-        )
+    # If extraction failed or content is too short, return placeholder
+    if not article_text or len(article_text) < 300:
+        placeholder_summary = "Unable to generate a summary for this article. It may be behind a paywall or require authentication. Please visit the article directly to read the full content."
+        set_in_cache(summary_cache, cache_key, placeholder_summary)
+        return {
+            "source": "placeholder",
+            "summary": placeholder_summary,
+        }
 
     # --------------------------------------------------
     # 3. Generate summary
@@ -59,3 +63,4 @@ async def generate_summary(article_url: str):
         "source": "generated",
         "summary": summary,
     }
+
