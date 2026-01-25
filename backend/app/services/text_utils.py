@@ -10,24 +10,39 @@ async def extract_article_text(url: str) -> str:
     """
 
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Referer": "https://www.google.com/",
     }
 
-    async with httpx.AsyncClient(timeout=10.0) as client:
-        response = await client.get(url, headers=headers)
+    async with httpx.AsyncClient(timeout=10.0, follow_redirects=True) as client:
+        try:
+            response = await client.get(url, headers=headers)
+        except Exception as e:
+            raise Exception(f"Failed to fetch URL: {str(e)}")
 
     if response.status_code != 200:
-        raise Exception("Failed to fetch article content")
+        raise Exception(f"HTTP {response.status_code}: Failed to fetch article content")
 
     soup = BeautifulSoup(response.text, "html.parser")
 
     # Remove non-content elements
-    for tag in soup(["script", "style", "nav", "footer", "header", "aside"]):
+    for tag in soup(["script", "style", "nav", "footer", "header", "aside", "noscript"]):
         tag.decompose()
 
+    # Try multiple strategies to find content
     paragraphs = soup.find_all("p")
-
-    text = " ".join(p.get_text() for p in paragraphs)
+    
+    if not paragraphs:
+        # Fallback: look for divs with text content
+        paragraphs = soup.find_all("div", {"class": re.compile(r"(content|article|post|story|text)", re.I)})
+    
+    if not paragraphs:
+        # Last resort: get all text
+        text = soup.get_text()
+    else:
+        text = " ".join(p.get_text() for p in paragraphs)
 
     # Clean excessive whitespace
     text = re.sub(r"\s+", " ", text).strip()

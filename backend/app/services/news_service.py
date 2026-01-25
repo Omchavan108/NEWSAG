@@ -67,11 +67,11 @@ class NewsService:
                 "id": hashlib.md5(article["url"].encode()).hexdigest(),
                 "title": article.get("title"),
                 "description": article.get("description"),
-                "imageUrl": article.get("urlToImage"),
-                "source": article.get("source", {}).get("name"),
-                "sourceUrl": article.get("url"),
+                "image_url": article.get("urlToImage"),
+                "source": {"name": article.get("source", {}).get("name")},
+                "url": article.get("url"),
                 "category": category,
-                "publishedAt": article.get("publishedAt"),
+                "published_at": article.get("publishedAt"),
             })
 
         return normalized
