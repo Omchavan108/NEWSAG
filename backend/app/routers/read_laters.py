@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from bson import ObjectId
 from app.core.database import get_db
-from app.core.auth import get_current_user
+from app.core.auth import get_current_user_optional
 from app.models.read_later import ReadLaterModel
 
 router = APIRouter()
@@ -10,7 +10,7 @@ router = APIRouter()
 @router.post("/")
 async def add_read_later(
     item: ReadLaterModel,
-    user=Depends(get_current_user),
+    user=Depends(get_current_user_optional),
     db=Depends(get_db),
 ):
     user_id = user["user_id"]
@@ -36,7 +36,7 @@ async def add_read_later(
 
 @router.get("/")
 async def get_read_later(
-    user=Depends(get_current_user),
+    user=Depends(get_current_user_optional),
     db=Depends(get_db),
 ):
     user_id = user["user_id"]
@@ -47,6 +47,7 @@ async def get_read_later(
     ).sort("created_at", -1)
 
     async for item in cursor:
+        item["_id"] = str(item["_id"])
         items.append(ReadLaterModel(**item))
 
     return {
@@ -58,7 +59,7 @@ async def get_read_later(
 @router.delete("/{item_id}")
 async def remove_read_later(
     item_id: str,
-    user=Depends(get_current_user),
+    user=Depends(get_current_user_optional),
     db=Depends(get_db),
 ):
     user_id = user["user_id"]
