@@ -56,3 +56,35 @@ async def get_current_user(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired token",
         )
+
+
+async def get_current_user_optional(
+    credentials: HTTPAuthorizationCredentials | None = Depends(HTTPBearer(auto_error=False)),
+):
+    """Optional authentication - returns demo user if not authenticated"""
+    if not credentials:
+        return {"user_id": "demo_user", "email": "demo@example.com"}
+    
+    try:
+        token = credentials.credentials
+        jwks = await get_jwks()
+        header = jwt.get_unverified_header(token)
+
+        key = next(
+            k for k in jwks["keys"] if k["kid"] == header["kid"]
+        )
+
+        payload = jwt.decode(
+            token,
+            key,
+            algorithms=["RS256"],
+            audience=CLERK_AUDIENCE,
+            issuer=CLERK_ISSUER,
+        )
+
+        return {
+            "user_id": payload["sub"],
+            "email": payload.get("email"),
+        }
+    except Exception:
+        return {"user_id": "demo_user", "email": "demo@example.com"}
