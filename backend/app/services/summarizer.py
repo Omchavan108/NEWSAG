@@ -1,79 +1,93 @@
 import re
+import numpy as np
 from typing import List
 from sklearn.feature_extraction.text import TfidfVectorizer
-import numpy as np
 
 
 class TextSummarizer:
     """
-    Extractive text summarizer using classical NLP techniques.
-    No AI models are used.
+    High-quality extractive NLP summarizer (NO AI / NO APIs)
+    Optimized for news articles.
     """
 
     def __init__(self):
         self.vectorizer = TfidfVectorizer(
             stop_words="english",
-            max_df=0.9,
+            ngram_range=(1, 2),
+            max_df=0.85,
             min_df=2
         )
 
+    def summarize(
+        self,
+        text: str,
+        *,
+        min_words: int = 100,
+        max_words: int = 120,
+        max_sentences: int = 10,
+    ) -> str:
+        sentences = self._split_sentences(text)
+
+        if not sentences:
+            return ""
+
+        full_text = " ".join(sentences)
+        if len(full_text.split()) <= min_words:
+            return full_text.strip()
+
+        scores = self._score(sentences)
+
+        ranked = np.argsort(scores)[::-1]
+
+        selected = []
+        used_words = set()
+        word_count = 0
+
+        for idx in ranked:
+            sentence = sentences[idx]
+            words = set(sentence.lower().split())
+
+            # ❌ Skip highly redundant sentences
+            overlap = len(words & used_words) / max(len(words), 1)
+            if overlap > 0.6:
+                continue
+
+            selected.append((idx, sentence))
+            used_words |= words
+            word_count += len(sentence.split())
+
+            if word_count >= min_words or len(selected) >= max_sentences:
+                break
+
+        selected.sort(key=lambda x: x[0])
+
+        summary = " ".join(s for _, s in selected)
+        words = summary.split()
+
+        if len(words) > max_words:
+            summary = " ".join(words[:max_words]).rstrip() + "…"
+
+        return summary
+
     # --------------------------------------------------
-    # Public API
+    # Helpers
     # --------------------------------------------------
-    def summarize(self, text: str, max_sentences: int = 6) -> str:
-        """
-        Generate a summary from article text.
 
-        :param text: full article content
-        :param max_sentences: number of sentences in summary
-        :return: summarized text
-        """
-
-        sentences = self._split_into_sentences(text)
-
-        if len(sentences) <= max_sentences:
-            return text.strip()
-
-        scores = self._score_sentences(sentences)
-        top_indices = self._select_top_sentences(scores, max_sentences)
-
-        # Keep original order for readability
-        top_indices.sort()
-
-        summary = " ".join(sentences[i] for i in top_indices)
-        return summary.strip()
-
-    # --------------------------------------------------
-    # Internal Helpers
-    # --------------------------------------------------
-    def _split_into_sentences(self, text: str) -> List[str]:
-        """
-        Split article text into sentences.
-        """
+    def _split_sentences(self, text: str) -> List[str]:
         text = re.sub(r"\s+", " ", text)
         sentences = re.split(r"(?<=[.!?])\s+", text)
-        return [s.strip() for s in sentences if len(s.strip()) > 40]
+        return [
+            s.strip()
+            for s in sentences
+            if len(s.strip()) > 50
+        ]
 
-    def _score_sentences(self, sentences: List[str]) -> np.ndarray:
-        """
-        Score each sentence using TF-IDF.
-        """
-        tfidf_matrix = self.vectorizer.fit_transform(sentences)
+    def _score(self, sentences: List[str]) -> np.ndarray:
+        tfidf = self.vectorizer.fit_transform(sentences)
+        scores = tfidf.sum(axis=1).A1
 
-        # Sentence importance = sum of TF-IDF values
-        scores = tfidf_matrix.sum(axis=1).A1
-
-        # Position bias (earlier sentences slightly more important)
-        position_weight = np.linspace(1.2, 0.8, len(scores))
-        scores = scores * position_weight
+        # 📰 Strong lead bias (news articles)
+        lead_bias = np.linspace(1.6, 0.7, len(scores))
+        scores *= lead_bias
 
         return scores
-
-    def _select_top_sentences(
-        self, scores: np.ndarray, max_sentences: int
-    ) -> List[int]:
-        """
-        Select indices of top-ranked sentences.
-        """
-        ranked_indices = np.argsort(scores)[::-1]
-        return ranked_indices[:max_sentences].tolist()
