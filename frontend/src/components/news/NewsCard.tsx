@@ -5,6 +5,7 @@ import { Button } from '../ui/Button';
 import { newsService } from '../../services/news.service';
 import { userService } from '../../services/user.service';
 import { Modal } from '../ui/Modal';
+import { formatRelativeTime, getReadTimeText } from '../../utils/timeUtils';
 
 interface NewsCardProps {
   article: Article;
@@ -99,9 +100,12 @@ export const NewsCard: React.FC<NewsCardProps> = ({
             <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
               {article.source}
             </span>
-            <span className="text-xs text-slate-400">
-              {article.published_at ? new Date(article.published_at).toLocaleDateString() : 'Recently'}
-            </span>
+            <div className="flex items-center gap-3 text-xs text-slate-400">
+              <span>{formatRelativeTime(article.published_at)}</span>
+              {(article.description || article.content) && (
+                <span className="text-slate-500">• {getReadTimeText(article.description || article.content)}</span>
+              )}
+            </div>
           </div>
           
           <h3 className="text-lg font-bold leading-tight mb-2 line-clamp-2 hover:text-indigo-600 transition-colors">
@@ -199,9 +203,15 @@ export const NewsCard: React.FC<NewsCardProps> = ({
           <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
             {article.source}
           </span>
-          <span className="text-xs text-slate-400">
-            {article.published_at ? new Date(article.published_at).toLocaleDateString() : 'Recently'}
-          </span>
+          <div className="flex items-center gap-2 text-xs text-slate-400">
+            <span>{formatRelativeTime(article.published_at)}</span>
+            {(article.description || article.content) && (
+              <>
+                <span>•</span>
+                <span>{getReadTimeText(article.description || article.content)}</span>
+              </>
+            )}
+          </div>
         </div>
         
         <h3 className="text-lg font-bold leading-tight mb-3 line-clamp-2 hover:text-indigo-600 transition-colors">

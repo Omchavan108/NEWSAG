@@ -1,14 +1,38 @@
 ﻿import logging
 from fastapi import APIRouter, HTTPException
 from app.services.news_service import GNewsService
+from app.services.sentiment import SentimentAnalyzer
 from app.core.cache import get_from_cache, set_in_cache, delete_from_cache
 from app.core.gnews_counter import GNewsCounter  # ✅ Added
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+sentiment_analyzer = SentimentAnalyzer()
 
 # Default categories
 CATEGORIES = ["general", "nation", "business", "technology", "sports", "entertainment", "health"]
+
+# --------------------------------------------------
+# HELPER: Add sentiment to articles
+# --------------------------------------------------
+def add_sentiment_to_articles(articles):
+    """Calculate sentiment for each article based on title + description"""
+    for article in articles:
+        text_to_analyze = f"{article.get('title', '')} {article.get('description', '')}"
+        if text_to_analyze.strip():
+            result = sentiment_analyzer.analyze(text_to_analyze)
+            article["sentiment"] = {
+                "label": result["sentiment"],  # Returns 'Positive', 'Neutral', or 'Negative'
+                "score": result["score"],
+                "source": "computed"
+            }
+        else:
+            article["sentiment"] = {
+                "label": "Neutral",
+                "score": 0,
+                "source": "computed"
+            }
+    return articles
 
 # -----------------------------
 # GET NEWS BY TOPIC (CACHE FIRST)
@@ -21,6 +45,8 @@ async def get_news_by_topic(topic: str):
     cached = await get_from_cache(cache_key)
     if cached:
         logger.info(f"[CACHE HIT] {topic}")
+        # ✅ Add sentiment to cached articles
+        cached = add_sentiment_to_articles(cached)
         # ✅ Return hit status even from cache
         hit_status = await GNewsCounter.get_hit_status()
         return {
@@ -37,6 +63,9 @@ async def get_news_by_topic(topic: str):
         logger.error(f"Error fetching news for {topic}: {str(e)}")
         raise HTTPException(status_code=502, detail=str(e))
 
+    # ✅ Add sentiment analysis to articles before caching
+    articles = add_sentiment_to_articles(articles)
+    
     await set_in_cache(cache_key, articles)
     
     # ✅ Get hit status after API call
