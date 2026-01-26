@@ -3,75 +3,64 @@ import hashlib
 from typing import List, Dict
 from app.core.config import settings
 
+ALLOWED_CATEGORIES = [
+    "general",
+    "nation",
+    "business",
+    "technology",
+    "sports",
+    "entertainment",
+    "health",
+]
 
-class NewsService:
-    """
-    Service class responsible for fetching news
-    from external data providers (News API).
-    """
+MAX_ARTICLES = 20  # HARD CAP
 
+class GNewsService:
     @staticmethod
-    async def fetch_news_by_category(category: str) -> List[Dict]:
-        """
-        Fetch news articles by category from News API.
-
-        :param category: news category (top, business, sports, etc.)
-        :return: list of normalized news articles
-        """
-
-        url = f"{settings.NEWS_API_BASE_URL}/top-headlines"
+    async def fetch_category(category: str) -> List[Dict]:
+        if category not in ALLOWED_CATEGORIES:
+            category = "general"
 
         params = {
-            "apiKey": settings.NEWS_API_KEY,
             "category": category,
-            "language": "en",
-            "pageSize": 40,
+            "country": "in",
+            "lang": "en",
+            "max": MAX_ARTICLES,
+            "apikey": settings.GNEWS_API_KEY,
         }
 
+        async with httpx.AsyncClient(timeout=10) as client:
+            response = await client.get(
+                f"{settings.GNEWS_BASE_URL}/top-headlines",
+                params=params
+            )
 
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get(url, params=params)
-
-        # --------------------------------------------------
-        # Error Handling
-        # --------------------------------------------------
         if response.status_code != 200:
             raise Exception(
-                f"News API error: {response.status_code} - {response.text}"
+                f"GNews error {response.status_code}: {response.text}"
             )
 
         data = response.json()
-        articles = data.get("articles", [])
+        articles = []
 
-        return NewsService._normalize_articles(articles, category)
-
-    # --------------------------------------------------
-    # Internal Helpers
-    # --------------------------------------------------
-
-    @staticmethod
-    def _normalize_articles(raw_articles: List[Dict], category: str) -> List[Dict]:
-        """
-        Normalize raw News API articles into
-        frontend-friendly format.
-        """
-
-        normalized = []
-
-        for article in raw_articles:
-            # Skip invalid entries
-            if not article.get("title") or not article.get("url"):
+        for item in data.get("articles", []):
+            if not item.get("title") or not item.get("url"):
                 continue
 
-            normalized.append({
-                "id": hashlib.md5(article["url"].encode()).hexdigest(),
-                "title": article.get("title"),
-                "description": article.get("description"),
-                "image_url": article.get("urlToImage"),
-                "source": {"name": article.get("source", {}).get("name")},
-                "url": article.get("url"),
+            article_id = hashlib.md5(
+                item["url"].encode()
+            ).hexdigest()
+
+            articles.append({
+                "id": article_id,
+                "title": item["title"],
+                "description": item.get("description"),
+                "content": item.get("content"),  # ✅ Added: Full content from GNews
+                "image_url": item.get("image"),
+                "source": item.get("source", {}).get("name"),
+                "url": item["url"],
+                "published_at": item.get("publishedAt"),
                 "category": category,
-                "published_at": article.get("publishedAt"),
             })
 
-        return normalized
+        return articles[:MAX_ARTICLES]
