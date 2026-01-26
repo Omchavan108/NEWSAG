@@ -24,8 +24,8 @@ export interface Article {
 
 export interface SentimentData {
   label: 'Positive' | 'Neutral' | 'Negative';
-  score: number;
-  source?: 'cache' | 'computed';
+  confidence: number;  // ✅ Changed: 0-1 confidence score (not percentage)
+  model: string;       // ✅ Added: Model identifier (e.g., "roberta-news")
 }
 
 export interface SummaryData {

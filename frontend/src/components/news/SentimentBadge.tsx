@@ -27,11 +27,17 @@ export const SentimentBadge: React.FC<SentimentBadgeProps> = ({ sentiment }) => 
   };
 
   const { bg, text, label } = config[sentiment.label];
+  
+  // Show confidence as decimal, not percentage
+  const confidenceText = sentiment.confidence.toFixed(2);
 
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${bg} ${text}`}>
+    <span 
+      className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${bg} ${text}`}
+      title={`Confidence: ${confidenceText}`}
+    >
       <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${text.replace('text', 'bg')}`}></span>
-      {label} {(sentiment.score * 100).toFixed(0)}%
+      {label}
     </span>
   );
 };

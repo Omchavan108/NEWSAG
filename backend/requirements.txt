@@ -6,3 +6,5 @@ motor
 pydantic
 email-validator
 redis
+transformers
+torch

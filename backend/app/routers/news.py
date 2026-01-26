@@ -1,37 +1,39 @@
 ﻿import logging
 from fastapi import APIRouter, HTTPException
 from app.services.news_service import GNewsService
-from app.services.sentiment import SentimentAnalyzer
+from app.services.sentiment_ml import SentimentService  # ✅ Use new ML-based sentiment
 from app.core.cache import get_from_cache, set_in_cache, delete_from_cache
-from app.core.gnews_counter import GNewsCounter  # ✅ Added
+from app.core.gnews_counter import GNewsCounter
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
-sentiment_analyzer = SentimentAnalyzer()
 
 # Default categories
 CATEGORIES = ["general", "nation", "business", "technology", "sports", "entertainment", "health"]
 
 # --------------------------------------------------
-# HELPER: Add sentiment to articles
+# HELPER: Add ML-based sentiment to articles
 # --------------------------------------------------
 def add_sentiment_to_articles(articles):
-    """Calculate sentiment for each article based on title + description"""
+    """
+    Calculate sentiment for each article using ML model.
+    Combines title + description + content for analysis.
+    """
     for article in articles:
-        text_to_analyze = f"{article.get('title', '')} {article.get('description', '')}"
-        if text_to_analyze.strip():
-            result = sentiment_analyzer.analyze(text_to_analyze)
-            article["sentiment"] = {
-                "label": result["sentiment"],  # Returns 'Positive', 'Neutral', or 'Negative'
-                "score": result["score"],
-                "source": "computed"
-            }
-        else:
-            article["sentiment"] = {
-                "label": "Neutral",
-                "score": 0,
-                "source": "computed"
-            }
+        # Use ML service to analyze article sentiment
+        sentiment_result = SentimentService.analyze_article(
+            title=article.get('title', ''),
+            description=article.get('description', ''),
+            content=article.get('content', '')
+        )
+        
+        # Attach sentiment to article
+        article["sentiment"] = {
+            "label": sentiment_result["label"],
+            "confidence": sentiment_result["confidence"],
+            "model": sentiment_result["model"]
+        }
+    
     return articles
 
 # -----------------------------

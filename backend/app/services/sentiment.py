@@ -1,11 +1,23 @@
+"""
+⚠️ DEPRECATED: This rule-based sentiment analyzer is no longer used.
+
+Use app/services/sentiment_ml.py instead for production sentiment analysis.
+This file is kept for backward compatibility only.
+
+The new ML-based sentiment service uses:
+- Model: cardiffnlp/twitter-roberta-base-sentiment-latest
+- Returns: Positive, Neutral, Negative with confidence scores (0-1)
+- Caching: Integrated with Redis for performance
+"""
+
 import re
 from typing import Dict
 
 
 class SentimentAnalyzer:
     """
-    Rule-based sentiment analyzer using lexical polarity.
-    No machine learning or AI APIs are used.
+    ⚠️ DEPRECATED: Rule-based sentiment analyzer.
+    Use SentimentService from sentiment_ml.py instead.
     """
 
     POSITIVE_WORDS = {
@@ -22,8 +34,9 @@ class SentimentAnalyzer:
 
     def analyze(self, text: str) -> Dict:
         """
-        Analyze sentiment of given text.
-        Returns sentiment label and normalized score.
+        ⚠️ DEPRECATED: Analyze sentiment of given text using rule-based approach.
+        This is inaccurate and should not be used for production.
+        Use SentimentService.analyze() from sentiment_ml.py instead.
         """
 
         words = self._tokenize(text)
@@ -64,3 +77,4 @@ class SentimentAnalyzer:
         elif score < -0.1:
             return "Negative"
         return "Neutral"
+
