@@ -2,6 +2,7 @@ import httpx
 import hashlib
 from typing import List, Dict
 from app.core.config import settings
+from app.core.gnews_counter import GNewsCounter  # ✅ Added
 
 ALLOWED_CATEGORIES = [
     "general",
@@ -21,6 +22,11 @@ class GNewsService:
         if category not in ALLOWED_CATEGORIES:
             category = "general"
 
+        # ✅ Check API limit before calling
+        can_call, message = GNewsCounter.check_limit()
+        if not can_call:
+            raise Exception(f"GNews API limit: {message}")
+
         params = {
             "category": category,
             "country": "in",
@@ -34,6 +40,10 @@ class GNewsService:
                 f"{settings.GNEWS_BASE_URL}/top-headlines",
                 params=params
             )
+
+        # ✅ Increment hit counter on successful API call
+        if response.status_code == 200:
+            GNewsCounter.increment_hit()
 
         if response.status_code != 200:
             raise Exception(
