@@ -15,6 +15,8 @@ export const Home: React.FC<HomeProps> = ({ showNotification }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [retryCount, setRetryCount] = useState(0);
   
   // ✅ UI-only state: NEVER add to useEffect dependency array
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
@@ -29,15 +31,27 @@ export const Home: React.FC<HomeProps> = ({ showNotification }) => {
     { id: 'health', label: '🏥 Health' },
   ];
 
-  const fetchNews = async (cat: Topic) => {
+  const fetchNews = async (cat: Topic, isRetry = false) => {
     setIsLoading(true);
     setError(null);
     try {
       const result = await newsService.getNewsByTopic(cat);
       setArticles(result.articles);
       setIsDemoMode(result.isDemo);
+      setIsFirstLoad(false);
+      setRetryCount(0);
     } catch (err: any) {
-      setError(getErrorMessage(err));
+      const errorMsg = getErrorMessage(err);
+      // On first load, retry once after a delay instead of showing error immediately
+      if (isFirstLoad && retryCount < 1) {
+        setRetryCount(retryCount + 1);
+        setTimeout(() => {
+          fetchNews(cat, true);
+        }, 3000);
+      } else {
+        setError(errorMsg);
+        setIsFirstLoad(false);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -126,7 +140,19 @@ export const Home: React.FC<HomeProps> = ({ showNotification }) => {
         </div>
       </header>
 
-      {error ? (
+      {isFirstLoad && isLoading ? (
+        <div className="max-w-xl mx-auto py-20 px-8 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-[2.5rem] shadow-2xl border border-blue-100 dark:border-indigo-800 text-center animate-slide-up">
+          <div className="mb-6 flex justify-center">
+            <div className="relative w-16 h-16">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-600 rounded-full animate-spin" style={{maskImage: 'conic-gradient(transparent 25%, black 75%)'}}></div>
+              <div className="absolute inset-2 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-full"></div>
+            </div>
+          </div>
+          <h3 className="text-2xl font-black mb-2 text-slate-900 dark:text-white">Warming up AI Engine</h3>
+          <p className="text-slate-600 dark:text-slate-300 mb-2 text-sm">First load may take a few seconds while the model initializes...</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Thank you for your patience</p>
+        </div>
+      ) : error ? (
         <div className="max-w-xl mx-auto py-20 px-8 bg-white dark:bg-slate-800 rounded-[2.5rem] shadow-2xl border border-rose-100 dark:border-rose-900/20 text-center animate-slide-up">
           <h3 className="text-2xl font-black mb-4">Feed Unavailable</h3>
           <p className="text-slate-500 dark:text-slate-400 mb-8">{error}</p>
