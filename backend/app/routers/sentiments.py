@@ -1,6 +1,4 @@
-import hashlib
 from fastapi import APIRouter, HTTPException
-from app.core.cache import get_from_cache, set_in_cache
 from app.services.sentiment_ml import SentimentService  # ✅ Use new ML-based sentiment
 
 router = APIRouter()
@@ -20,27 +18,10 @@ async def analyze_sentiment(payload: dict):
             detail="Text is too short for sentiment analysis (minimum 3 characters)"
         )
 
-    cache_key = SentimentService.get_sentiment_cache_key(text)
-
     # --------------------------------------------------
-    # Cache check - reuse cached sentiment
+    # Analyze sentiment using ML model (service handles caching)
     # --------------------------------------------------
-    cached = await get_from_cache(cache_key)
-    if cached:
-        return {
-            "source": "cache",
-            "result": cached
-        }
-
-    # --------------------------------------------------
-    # Analyze sentiment using ML model
-    # --------------------------------------------------
-    result = SentimentService.analyze(text)
-
-    # --------------------------------------------------
-    # Cache result for future requests
-    # --------------------------------------------------
-    await set_in_cache(cache_key, result)
+    result = await SentimentService.analyze(text)
 
     return {
         "source": "computed",
