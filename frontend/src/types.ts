@@ -39,6 +39,8 @@ export interface Comment {
   article_id: string;
   article_title: string;
   text: string;
+  user_id: string;
+  username: string;
   created_at: string;
 }
 
