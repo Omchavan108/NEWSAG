@@ -73,20 +73,22 @@ export const Home: React.FC<HomeProps> = ({ showNotification }) => {
       )}
 
       {/* Categories Scroller */}
-      <div className="flex gap-3 overflow-x-auto pb-6 no-scrollbar mb-12 animate-slide-up">
+      <div className="mb-12 animate-slide-up">
+        <div className="flex flex-wrap md:flex-nowrap gap-3 overflow-x-auto no-scrollbar p-3 md:p-4 rounded-3xl bg-white/80 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-700/60 shadow-sm">
         {categories.map((cat) => (
           <button
             key={cat.id}
             onClick={() => setCategory(cat.id)}
-            className={`whitespace-nowrap px-6 py-3 rounded-2xl text-sm font-black transition-all duration-300 transform active:scale-95 ${
+            className={`whitespace-nowrap px-5 py-2.5 rounded-2xl text-sm font-black tracking-tight transition-all duration-300 transform active:scale-95 ${
               category === cat.id 
-                ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-600/30 -translate-y-1' 
-                : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 shadow-sm'
+                ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-600/30 -translate-y-1 ring-2 ring-indigo-500/30' 
+                : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 shadow-sm border border-slate-200/70 dark:border-slate-700/60'
             }`}
           >
             {cat.label}
           </button>
         ))}
+        </div>
       </div>
 
       <header className="mb-12 animate-slide-up" style={{ animationDelay: '0.1s' }}>
