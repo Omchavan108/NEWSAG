@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { Topic, Article } from '../types';
 import { NewsGrid } from '../components/news/NewsGrid';
+import { TrendingBulletin } from '../components/news/TrendingBulletin';
 import { newsService } from '../services/news.service';
 import { getErrorMessage } from '../services/api';
 import { Button } from '../components/ui/Button';
@@ -63,6 +64,9 @@ export const Home: React.FC<HomeProps> = ({ showNotification }) => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 md:px-8 py-12 animate-fade-in">
+      {/* 🔥 Live Trending Headlines Bulletin */}
+      <TrendingBulletin onError={(msg) => showNotification(msg, 'error')} />
+      
       {isDemoMode && (
         <div className="mb-8 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800 rounded-2xl flex items-center gap-3 text-amber-700 dark:text-amber-400 text-sm font-medium animate-slide-up">
           <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -167,17 +171,6 @@ export const Home: React.FC<HomeProps> = ({ showNotification }) => {
           viewType={viewType}
           onError={(msg) => showNotification(msg, 'error')} 
         />
-      )}
-      
-      {!isLoading && articles.length > 0 && (
-        <section className="mt-20 p-8 bg-gradient-to-br from-slate-900 to-slate-800 dark:from-indigo-950 dark:to-slate-900 rounded-[2.5rem] text-white overflow-hidden relative shadow-2xl animate-slide-up">
-            <div className="relative z-10">
-                <span className="inline-block px-3 py-1 bg-indigo-500/30 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">AI Trend Watch</span>
-                <h3 className="text-3xl font-black mb-4 leading-tight max-w-2xl">Visual AI search queries have seen a 400% spike in the tech category this month.</h3>
-                <p className="text-slate-300 mb-8 max-w-xl">Deep analysis shows users are moving away from keywords towards conversational and image-based news retrieval.</p>
-                <Button variant="secondary" className="shadow-lg shadow-emerald-500/20">Read Analysis</Button>
-            </div>
-        </section>
       )}
     </div>
   );

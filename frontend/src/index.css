@@ -82,3 +82,21 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* Trending Bulletin Animations */
+@keyframes scroll-x {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll-x {
+  animation: scroll-x 30s linear infinite;
+}
+
+.animate-scroll-x:hover {
+  animation-play-state: paused;
+}
