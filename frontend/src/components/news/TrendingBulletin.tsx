@@ -134,7 +134,7 @@ export const TrendingBulletin: React.FC<TrendingBulletinProps> = ({ onError }) =
                 
                 {/* Headline text */}
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-white font-bold text-sm sm:text-base truncate group-hover:text-indigo-300 transition-colors">
+                  <h4 className="text-slate-200 font-semibold text-sm sm:text-base truncate group-hover:text-slate-100 transition-colors">
                     {headline.title}
                   </h4>
                   <div className="flex items-center gap-2 mt-0.5">

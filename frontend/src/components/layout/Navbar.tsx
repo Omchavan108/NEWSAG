@@ -23,7 +23,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onThemeToggle, isDark }) => {
           <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-600/30 group-hover:scale-110 transition-transform duration-300">
             <span className="text-white font-black text-xl">A</span>
           </div>
-          <h1 className="text-2xl font-black tracking-tight hidden sm:block bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-emerald-500">
+          <h1 className="text-xl font-medium tracking-tight hidden sm:block text-slate-700 dark:text-white">
             NewsAura
           </h1>
         </Link>
