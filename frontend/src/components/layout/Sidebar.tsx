@@ -1,8 +1,10 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 export const Sidebar: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState<string>('general');
   
   const navItems = [
     {
@@ -33,6 +35,22 @@ export const Sidebar: React.FC = () => {
       ),
     },
   ];
+
+  const categories = [
+    { id: 'general', label: 'General', emoji: '🇮🇳' },
+    { id: 'nation', label: 'Nation', emoji: '🏛️' },
+    { id: 'business', label: 'Business', emoji: '💼' },
+    { id: 'technology', label: 'Technology', emoji: '🚀' },
+    { id: 'sports', label: 'Sports', emoji: '⚽' },
+    { id: 'entertainment', label: 'Entertainment', emoji: '🎬' },
+    { id: 'health', label: 'Health', emoji: '🏥' },
+  ];
+
+  const handleCategoryClick = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    // Navigate to home with category parameter
+    navigate('/?category=' + categoryId);
+  };
 
   return (
     <>
@@ -84,6 +102,28 @@ export const Sidebar: React.FC = () => {
                     <span className="sidebar-nav-icon">{item.icon}</span>
                     <span className="sidebar-nav-label">{item.label}</span>
                   </Link>
+                );
+              })}
+
+              {/* Divider */}
+              <div className="my-3 border-t border-slate-200 dark:border-slate-700"></div>
+
+              {/* Categories Section */}
+              <div className="px-2 mb-2">
+                <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Categories</h3>
+              </div>
+
+              {categories.map((category) => {
+                const isActive = selectedCategory === category.id;
+                return (
+                  <button
+                    key={category.id}
+                    onClick={() => handleCategoryClick(category.id)}
+                    className={`sidebar-nav-btn ${isActive ? 'active' : ''}`}
+                  >
+                    <span className="sidebar-nav-icon text-xl">{category.emoji}</span>
+                    <span className="sidebar-nav-label">{category.label}</span>
+                  </button>
                 );
               })}
             </nav>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import type { Topic, Article } from '../types';
 import { NewsGrid } from '../components/news/NewsGrid';
 import { TrendingBulletin } from '../components/news/TrendingBulletin';
@@ -11,7 +12,10 @@ interface HomeProps {
 }
 
 export const Home: React.FC<HomeProps> = ({ showNotification }) => {
-  const [category, setCategory] = useState<Topic>('general');
+  const [searchParams] = useSearchParams();
+  const categoryFromUrl = (searchParams.get('category') as Topic) || 'general';
+  
+  const [category, setCategory] = useState<Topic>(categoryFromUrl);
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,6 +24,14 @@ export const Home: React.FC<HomeProps> = ({ showNotification }) => {
   
   // ✅ UI-only state: NEVER add to useEffect dependency array
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
+
+  useEffect(() => {
+    setCategory(categoryFromUrl);
+  }, [categoryFromUrl]);
+
+  useEffect(() => {
+    setCategory(categoryFromUrl);
+  }, [categoryFromUrl]);
 
   const categories: { id: Topic; label: string }[] = [
     { id: 'general', label: '🇮🇳 General' },

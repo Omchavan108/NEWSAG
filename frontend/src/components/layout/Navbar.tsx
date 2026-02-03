@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 interface NavbarProps {
   onThemeToggle: () => void;
@@ -7,17 +7,9 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ onThemeToggle, isDark }) => {
-  const location = useLocation();
-  
-  const navLinks = [
-    { path: '/', label: 'Feed' },
-    { path: '/bookmarks', label: 'Saved' },
-    { path: '/read-later', label: 'Queue' },
-  ];
-
   return (
     <nav className="sticky top-0 z-50 glass border-b border-slate-200 dark:border-slate-800 px-4 md:px-8 py-4 transition-all duration-300">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <div className="w-full flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3 group">
           <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-600/30 group-hover:scale-110 transition-transform duration-300">
@@ -27,19 +19,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onThemeToggle, isDark }) => {
             NewsAura
           </h1>
         </Link>
-
-        {/* Links */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map(link => (
-            <Link 
-              key={link.path}
-              to={link.path}
-              className={`text-sm font-black transition-colors ${location.pathname === link.path ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'}`}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
 
         {/* Actions */}
         <div className="flex items-center gap-4">
