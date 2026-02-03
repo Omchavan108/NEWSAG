@@ -61,7 +61,7 @@ export const Home: React.FC<HomeProps> = ({ showNotification }) => {
   }, [category]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 md:px-8 py-12 animate-fade-in">
+    <div className="w-full px-4 md:px-8 py-12 animate-fade-in">
       {/* 🔥 Live Trending Headlines Bulletin */}
       <TrendingBulletin onError={(msg) => showNotification(msg, 'error')} />
 

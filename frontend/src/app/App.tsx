@@ -32,7 +32,7 @@ const App: React.FC = () => {
 
         <Sidebar />
 
-        <main className="flex-grow">
+        <main className="flex-grow lg:pl-24">
           <AppRouter showNotification={showNotification} />
         </main>
 
