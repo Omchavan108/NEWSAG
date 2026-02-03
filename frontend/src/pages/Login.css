@@ -1,0 +1,356 @@
+/* ========================================
+   Login Card Container
+======================================== */
+.card {
+  position: relative;
+  width: 100%;
+  max-width: 768px;
+  height: 500px;
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.dark .card {
+  background-color: #1e293b;
+}
+
+/* ========================================
+   Sliding Background
+======================================== */
+.card-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  transition: transform 0.6s ease-in-out;
+  z-index: 1;
+}
+
+.card-bg.login {
+  transform: translateX(100%);
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+/* ========================================
+   Hero Panels (Left/Right)
+======================================== */
+.hero {
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease-in-out;
+}
+
+.hero.register {
+  left: 0;
+  color: white;
+}
+
+.hero.register.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.hero.login {
+  right: 0;
+  color: white;
+}
+
+.hero.login.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.hero h2 {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  letter-spacing: -0.5px;
+}
+
+.hero p {
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  opacity: 0.95;
+}
+
+.hero button {
+  padding: 10px 40px;
+  border: 2px solid white;
+  background-color: transparent;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.hero button:hover {
+  background-color: white;
+  color: #667eea;
+  transform: scale(1.05);
+}
+
+.hero button:active {
+  transform: scale(0.95);
+}
+
+/* ========================================
+   Forms
+======================================== */
+.form {
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease-in-out;
+  z-index: 2;
+}
+
+.form.login {
+  left: 0;
+}
+
+.form.login.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.form.register {
+  right: 0;
+}
+
+.form.register.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.form h2 {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: #1f2937;
+}
+
+.dark .form h2 {
+  color: #f1f5f9;
+}
+
+.form span {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 15px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dark .form span {
+  color: #9ca3af;
+}
+
+.form input {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 8px 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background-color: #f3f4f6;
+  color: #1f2937;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.dark .form input {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #f1f5f9;
+}
+
+.form input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background-color: white;
+}
+
+.dark .form input:focus {
+  background-color: #1f2937;
+}
+
+.form button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border: none;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.form button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.form button:active {
+  transform: translateY(0);
+}
+
+.form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Clerk Smart CAPTCHA container */
+.clerk-captcha {
+  width: 100%;
+  min-height: 44px;
+  margin: 8px 0 12px;
+}
+
+/* ========================================
+   Social Buttons
+======================================== */
+.sso {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 15px 0;
+}
+
+.sso a {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.sso a:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-3px);
+}
+
+.dark .sso a {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ========================================
+   Responsive Design
+======================================== */
+@media (max-width: 768px) {
+  .card {
+    height: auto;
+    max-width: 100%;
+  }
+
+  .card-bg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero,
+  .form {
+    width: 100%;
+    position: relative;
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .hero {
+    display: none;
+  }
+
+  .hero.active,
+  .form.active {
+    display: flex;
+  }
+
+  .form.login,
+  .form.register {
+    left: 0;
+    right: 0;
+  }
+}
+
+/* ========================================
+   Animations
+======================================== */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: slideUp 0.5s ease-out;
+}
+
+/* ========================================
+   Dark Mode Support
+======================================== */
+@media (prefers-color-scheme: dark) {
+  .card {
+    background-color: #1e293b;
+  }
+
+  .form h2 {
+    color: #f1f5f9;
+  }
+
+  .form span {
+    color: #9ca3af;
+  }
+
+  .form input {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: #f1f5f9;
+  }
+
+  .form input:focus {
+    background-color: #1f2937;
+  }
+}
