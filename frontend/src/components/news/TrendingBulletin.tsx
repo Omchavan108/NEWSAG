@@ -16,8 +16,8 @@ export const TrendingBulletin: React.FC<TrendingBulletinProps> = ({ onError }) =
   useEffect(() => {
     const fetchTrending = async () => {
       try {
-        const result = await newsService.getTrendingHeadlines(10);
-        setHeadlines(result.headlines);
+        const headlines = await newsService.getTrendingHeadlines(10);
+        setHeadlines(headlines);
       } catch (err: any) {
         console.error('Trending headlines error:', err);
         onError?.('Failed to load trending headlines');

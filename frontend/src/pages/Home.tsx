@@ -14,7 +14,6 @@ export const Home: React.FC<HomeProps> = ({ showNotification }) => {
   const [category, setCategory] = useState<Topic>('general');
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isDemoMode, setIsDemoMode] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [retryCount, setRetryCount] = useState(0);
@@ -36,9 +35,8 @@ export const Home: React.FC<HomeProps> = ({ showNotification }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const result = await newsService.getNewsByTopic(cat);
-      setArticles(result.articles);
-      setIsDemoMode(result.isDemo);
+      const articles = await newsService.getNewsByTopic(cat);
+      setArticles(articles);
       setIsFirstLoad(false);
       setRetryCount(0);
     } catch (err: any) {
@@ -66,15 +64,6 @@ export const Home: React.FC<HomeProps> = ({ showNotification }) => {
     <div className="max-w-7xl mx-auto px-4 md:px-8 py-12 animate-fade-in">
       {/* 🔥 Live Trending Headlines Bulletin */}
       <TrendingBulletin onError={(msg) => showNotification(msg, 'error')} />
-      
-      {isDemoMode && (
-        <div className="mb-8 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800 rounded-2xl flex items-center gap-3 text-amber-700 dark:text-amber-400 text-sm font-medium animate-slide-up">
-          <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span>Offline Demo: Viewing cached/mock data. Connect to <code className="bg-amber-100 dark:bg-amber-900/40 px-1 rounded">localhost:8000</code> for live news.</span>
-        </div>
-      )}
 
       {/* Categories Scroller */}
       <div className="mb-12 animate-slide-up">
@@ -104,7 +93,8 @@ export const Home: React.FC<HomeProps> = ({ showNotification }) => {
                 {articles.length}
               </span>
             </h2>
-            <p className="text-slate-500 dark:text-slate-400 font-medium">Daily digest analyzed by Gemini Pro Vision.</p>
+            
+            
           </div>
           
           <div className="flex items-center gap-4">
@@ -136,11 +126,6 @@ export const Home: React.FC<HomeProps> = ({ showNotification }) => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               </button>
-            </div>
-            
-            <div className="flex items-center gap-2 text-sm font-bold text-slate-400">
-               <span className={`w-2 h-2 rounded-full ${isDemoMode ? 'bg-slate-300 dark:bg-slate-700' : 'bg-emerald-500 animate-pulse'}`}></span>
-               {isDemoMode ? 'Static Cache' : 'Real-time Feed'}
             </div>
           </div>
         </div>
