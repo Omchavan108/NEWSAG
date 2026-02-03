@@ -176,7 +176,9 @@ export const NewsCard: React.FC<NewsCardProps> = ({
                       <span className="text-[8px] font-normal uppercase tracking-widest italic">Special AI Edition</span>
                     </div>
                     <h4 className="font-serif text-xl sm:text-2xl font-normal tracking-tight uppercase mb-1">
-                      {typeof article.source === 'string' ? article.source : article.source?.name || 'The Artificial Dispatch'}
+                      {typeof article.source === 'string'
+                        ? article.source
+                        : (article.source as { name?: string })?.name || 'The Artificial Dispatch'}
                     </h4>
                  </div>
 
@@ -324,7 +326,9 @@ export const NewsCard: React.FC<NewsCardProps> = ({
                     <span className="text-[8px] font-normal uppercase tracking-widest italic">Special AI Edition</span>
                   </div>
                   <h4 className="font-serif text-xl sm:text-2xl font-normal tracking-tight uppercase mb-1">
-                    {typeof article.source === 'string' ? article.source : article.source?.name || 'The Artificial Dispatch'}
+                    {typeof article.source === 'string'
+                      ? article.source
+                      : (article.source as { name?: string })?.name || 'The Artificial Dispatch'}
                   </h4>
                </div>
 
