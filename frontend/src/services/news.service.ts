@@ -18,7 +18,7 @@ export const newsService = {
   // --------------------------------------------------
   getTrendingHeadlines: async (
     maxItems: number = 8
-  ): Promise<{ headlines: TrendingHeadline[]; isDemo: boolean }> => {
+  ): Promise<TrendingHeadline[]> => {
     try {
       const response = await api.get<{
         headlines: TrendingHeadline[];
@@ -28,10 +28,7 @@ export const newsService = {
         params: { max_items: maxItems }
       });
 
-      return {
-        headlines: response.data.headlines,
-        isDemo: false,
-      };
+      return response.data.headlines;
     } catch (err: unknown) {
       console.error('Failed to fetch trending headlines:', err);
       throw new Error(getErrorMessage(err));
@@ -43,7 +40,7 @@ export const newsService = {
   // --------------------------------------------------
   getNewsByTopic: async (
     topic: Topic
-  ): Promise<{ articles: Article[]; isDemo: boolean }> => {
+  ): Promise<Article[]> => {
     try {
       const response = await api.get<{
         articles: Article[];
@@ -51,10 +48,7 @@ export const newsService = {
         source: string;
       }>(`/api/news/topic/${topic}`);
 
-      return {
-        articles: response.data.articles,
-        isDemo: response.data.source === 'cache' ? false : false,
-      };
+      return response.data.articles;
     } catch (err: unknown) {
       console.error(`Failed to fetch news for topic ${topic}:`, err);
       throw new Error(getErrorMessage(err));
