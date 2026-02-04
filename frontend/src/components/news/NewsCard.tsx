@@ -122,7 +122,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({
             <div className="flex gap-1">
               <button 
                 onClick={toggleBookmark}
-                className={`p-2 rounded-full transition-all ${isBookmarked ? 'text-white bg-indigo-600 hover:bg-indigo-700' : 'text-white/70 bg-slate-700 hover:bg-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600'}`}
+                className={`p-2 rounded-full transition-all ${isBookmarked ? 'text-white bg-indigo-600 hover:bg-indigo-700' : 'text-slate-700 bg-white hover:bg-indigo-600 hover:text-white border border-slate-200 dark:border-slate-600'}`}
                 title="Bookmark"
               >
                 <svg className="w-4 h-4" fill={isBookmarked ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
@@ -131,7 +131,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({
               </button>
               <button 
                 onClick={toggleReadLater}
-                className={`p-2 rounded-full transition-all ${isInReadLater ? 'text-white bg-indigo-600 hover:bg-indigo-700' : 'text-white/70 bg-slate-700 hover:bg-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600'}`}
+                className={`p-2 rounded-full transition-all ${isInReadLater ? 'text-white bg-indigo-600 hover:bg-indigo-700' : 'text-slate-700 bg-white hover:bg-indigo-600 hover:text-white border border-slate-200 dark:border-slate-600'}`}
                 title="Read Later"
               >
                 <svg className="w-4 h-4" fill={isInReadLater ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
@@ -140,7 +140,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({
               </button>
               <button 
                 onClick={() => setIsCommentsOpen(true)}
-                className="p-2 rounded-full transition-all text-white/70 bg-slate-700 hover:bg-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600"
+                className="p-2 rounded-full transition-all text-slate-700 bg-white hover:bg-indigo-600 hover:text-white border border-slate-200 dark:border-slate-600"
                 title="Comments"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -272,7 +272,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({
           <div className="flex gap-1">
             <button 
               onClick={toggleBookmark}
-              className={`p-2 rounded-full transition-all ${isBookmarked ? 'text-white bg-indigo-600 hover:bg-indigo-700' : 'text-white/70 bg-slate-700 hover:bg-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600'}`}
+              className={`p-2 rounded-full transition-all ${isBookmarked ? 'text-white bg-indigo-600 hover:bg-indigo-700' : 'text-slate-700 bg-white hover:bg-indigo-600 hover:text-white border border-slate-200 dark:border-slate-600'}`}
               title="Bookmark"
             >
               <svg className="w-4 h-4" fill={isBookmarked ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
@@ -281,7 +281,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({
             </button>
             <button 
               onClick={toggleReadLater}
-              className={`p-2 rounded-full transition-all ${isInReadLater ? 'text-white bg-indigo-600 hover:bg-indigo-700' : 'text-white/70 bg-slate-700 hover:bg-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600'}`}
+              className={`p-2 rounded-full transition-all ${isInReadLater ? 'text-white bg-indigo-600 hover:bg-indigo-700' : 'text-slate-700 bg-white hover:bg-indigo-600 hover:text-white border border-slate-200 dark:border-slate-600'}`}
               title="Read Later"
             >
               <svg className="w-4 h-4" fill={isInReadLater ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
@@ -290,7 +290,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({
             </button>
             <button 
               onClick={() => setIsCommentsOpen(true)}
-              className="p-2 rounded-full transition-all text-white/70 bg-slate-700 hover:bg-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600"
+              className="p-2 rounded-full transition-all text-slate-700 bg-white hover:bg-indigo-600 hover:text-white border border-slate-200 dark:border-slate-600"
               title="Comments"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
