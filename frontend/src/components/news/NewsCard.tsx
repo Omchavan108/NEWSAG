@@ -208,13 +208,13 @@ export const NewsCard: React.FC<NewsCardProps> = ({
                     <div className="flex gap-3">
                       <button 
                         onClick={() => setIsModalOpen(false)}
-                        className="text-xs font-normal uppercase tracking-widest border-b-2 border-black hover:opacity-60 transition-opacity"
+                        className="text-xs font-normal uppercase tracking-widest border-b-2 border-white hover:opacity-60 transition-opacity text-black dark:text-white"
                       >
                         Close
                       </button>
                       <button 
                         onClick={() => window.open(article.url, '_blank')}
-                        className="text-xs font-normal uppercase tracking-widest border-2 border-black px-3 py-1.5 hover:bg-black hover:text-white transition-all"
+                        className="text-xs font-normal uppercase tracking-widest border-2 border-white bg-white text-black px-3 py-1.5 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 active:bg-indigo-700 transition-all"
                       >
                         Read Full Article
                       </button>
@@ -358,13 +358,13 @@ export const NewsCard: React.FC<NewsCardProps> = ({
                   <div className="flex gap-3">
                     <button 
                       onClick={() => setIsModalOpen(false)}
-                      className="text-xs font-normal uppercase tracking-widest border-b-2 border-black hover:opacity-60 transition-opacity"
+                      className="text-xs font-normal uppercase tracking-widest border-b-2 border-white hover:opacity-60 transition-opacity text-black dark:text-white"
                     >
                       Close
                     </button>
                     <button 
                       onClick={() => window.open(article.url, '_blank')}
-                      className="text-xs font-normal uppercase tracking-widest border-2 border-black px-3 py-1.5 hover:bg-black hover:text-white transition-all"
+                      className="text-xs font-normal uppercase tracking-widest border-2 border-white bg-white text-black px-3 py-1.5 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 active:bg-indigo-700 transition-all"
                     >
                       Read Full Article
                     </button>
