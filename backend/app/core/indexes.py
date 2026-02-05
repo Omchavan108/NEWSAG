@@ -88,6 +88,16 @@ async def create_indexes():
         )
         
         logger.info("[OK] Feedback indexes created")
+
+        # --------------------------------------------------
+        # SUMMARY LOGS COLLECTION
+        # --------------------------------------------------
+        await db.summary_logs.create_index(
+            [("user_id", 1), ("created_at", -1)],
+            name="idx_summary_user_created"
+        )
+
+        logger.info("[OK] Summary logs indexes created")
         
         logger.info("[OK] All MongoDB indexes created successfully")
         

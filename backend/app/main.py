@@ -16,6 +16,7 @@ from app.routers import (
     bookmarks,
     read_laters,
     feedbacks,
+    profile,
 )
 
 # --------------------------------------------------
@@ -66,6 +67,7 @@ app.include_router(comments.router, prefix="/api/comments", tags=["Comments"])
 app.include_router(bookmarks.router, prefix="/api/bookmarks", tags=["Bookmarks"])
 app.include_router(read_laters.router, prefix="/api/read-later", tags=["Read Later"])
 app.include_router(feedbacks.router, prefix="/api/feedback", tags=["Feedback"])
+app.include_router(profile.router, prefix="/api/profile", tags=["Profile"])
 
 logger = logging.getLogger(__name__)
 

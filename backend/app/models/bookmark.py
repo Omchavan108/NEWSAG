@@ -12,6 +12,7 @@ class BookmarkModel(MongoBase):
     article_id: str
     title: str
     source: str
+    category: str | None = None
     url: str
     image_url: str | None = None
     created_at: datetime = Field(default_factory=datetime.utcnow)

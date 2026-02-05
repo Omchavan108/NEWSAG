@@ -1,6 +1,33 @@
 import { api, getErrorMessage } from './api';
 import type { Bookmark, ReadLaterItem, Comment } from '../types';
 
+export interface ProfileStatsResponse {
+  articles_read: number;
+  bookmarks: number;
+  read_later: number;
+  total_saved: number;
+}
+
+export interface ProfileAnalyticsResponse {
+  tier1: {
+    articles_read: number;
+    bookmarks: number;
+    read_later: number;
+    total_saved: number;
+    last_active_at: string | null;
+  };
+  tier2: {
+    top_category: string | null;
+    category_breakdown: Array<{ category: string; count: number }>;
+    weekly_activity: Array<{ day: string; count: number }>;
+  };
+  tier3: {
+    sentiment_breakdown: { Positive: number; Neutral: number; Negative: number } | null;
+    engagement_score: number;
+    engagement_label: string;
+  };
+}
+
 export const userService = {
   // Bookmarks
   getBookmarks: async (): Promise<Bookmark[]> => {
@@ -94,6 +121,25 @@ export const userService = {
   deleteComment: async (commentId: string): Promise<void> => {
     try {
       await api.delete(`/api/comments/${commentId}/`);
+    } catch (err) {
+      throw new Error(getErrorMessage(err));
+    }
+  },
+
+  // Profile stats
+  getProfileStats: async (): Promise<ProfileStatsResponse> => {
+    try {
+      const response = await api.get<ProfileStatsResponse>(`/api/profile/stats`);
+      return response.data;
+    } catch (err) {
+      throw new Error(getErrorMessage(err));
+    }
+  },
+
+  getProfileAnalytics: async (): Promise<ProfileAnalyticsResponse> => {
+    try {
+      const response = await api.get<ProfileAnalyticsResponse>(`/api/profile/analytics`);
+      return response.data;
     } catch (err) {
       throw new Error(getErrorMessage(err));
     }

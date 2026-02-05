@@ -60,7 +60,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({
         // Assume id is article_url for this example
         await userService.removeBookmark(article.url);
       } else {
-        await userService.addBookmark({ article_id: article.id, title: article.title, source: article.source, url: article.url, image_url: article.image_url });
+        await userService.addBookmark({ article_id: article.id, title: article.title, source: article.source, url: article.url, image_url: article.image_url, category: article.category });
       }
       setIsBookmarked(!isBookmarked);
     } catch (err: any) {
@@ -73,7 +73,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({
       if (isInReadLater) {
         await userService.removeFromReadLater(article.url);
       } else {
-        await userService.addToReadLater({ article_id: article.id, title: article.title, source: article.source, url: article.url });
+        await userService.addToReadLater({ article_id: article.id, title: article.title, source: article.source, url: article.url, category: article.category });
       }
       setIsInReadLater(!isInReadLater);
     } catch (err: any) {

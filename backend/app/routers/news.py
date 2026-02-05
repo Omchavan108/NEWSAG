@@ -13,6 +13,68 @@ CATEGORIES = ["general", "nation", "business", "technology", "sports", "entertai
 
 
 # -----------------------------
+# SEARCH SUGGESTIONS (CACHE ONLY)
+# -----------------------------
+@router.get("/suggestions")
+async def get_search_suggestions(q: str):
+    """
+    Return matching articles from Redis-cached categories only.
+    Matches query against title, description, content, and source (case-insensitive).
+    """
+    query = (q or "").strip()
+    if len(query) < 2:
+        logger.info("[SUGGESTIONS REJECTED] query too short")
+        raise HTTPException(status_code=400, detail="Query must be at least 2 characters")
+
+    query_lower = query.lower()
+    results = []
+    seen_ids = set()
+
+    for category in CATEGORIES:
+        cache_key = f"gnews:{category}"
+        cached = await get_from_cache(cache_key)
+        if not cached:
+            continue
+
+        for article in cached:
+            title = (article.get("title") or "").lower()
+            description = (article.get("description") or "").lower()
+            content = (article.get("content") or "").lower()
+            source = article.get("source") or ""
+            if isinstance(source, dict):
+                source = source.get("name") or ""
+            source_lower = source.lower()
+
+            if query_lower not in title and query_lower not in description and query_lower not in content and query_lower not in source_lower:
+                continue
+
+            article_id = article.get("id") or article.get("url")
+            if article_id in seen_ids:
+                continue
+            seen_ids.add(article_id)
+
+            article_out = dict(article)
+            if isinstance(article_out.get("source"), dict):
+                article_out["source"] = article_out.get("source", {}).get("name") or ""
+
+            results.append(article_out)
+
+            if len(results) >= 6:
+                break
+
+        if len(results) >= 6:
+            break
+
+    logger.info(f"[SUGGESTIONS] query='{query_lower}' | count={len(results)}")
+
+    return {
+        "query": query,
+        "count": len(results),
+        "articles": results[:6],
+    }
+
+
+# -----------------------------
 # GET TRENDING HEADLINES (BULLETIN)
 # -----------------------------
 @router.get("/trending/headlines")

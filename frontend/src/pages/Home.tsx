@@ -26,6 +26,7 @@ const categories: { id: Topic; label: string }[] = [
 export const Home: React.FC<HomeProps> = ({ showNotification }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryFromUrl = (searchParams.get('category') as Topic) || 'general';
+  const queryFromUrl = (searchParams.get('q') || '').trim();
   const { isSignedIn, isLoaded } = useUser();
   
   const [category, setCategory] = useState<Topic>(categoryFromUrl);
@@ -80,11 +81,31 @@ export const Home: React.FC<HomeProps> = ({ showNotification }) => {
     }
   };
 
+  const fetchSuggestions = async (query: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await newsService.getSuggestions(query);
+      setArticles(response.articles || []);
+      setIsFirstLoad(false);
+      setRetryCount(0);
+    } catch {
+      setArticles([]);
+      setIsFirstLoad(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!isLoaded) return;
+    if (queryFromUrl.length >= 2) {
+      fetchSuggestions(queryFromUrl);
+      return;
+    }
     if (!isSignedIn && category !== 'general') return;
     fetchNews(category);
-  }, [category, isLoaded, isSignedIn]);
+  }, [category, isLoaded, isSignedIn, queryFromUrl]);
 
   return (
     <div className="w-full max-w-[calc(100vw-120px)] lg:max-w-[calc(100vw-140px)] px-4 md:px-8 py-12 animate-fade-in">
@@ -95,7 +116,7 @@ export const Home: React.FC<HomeProps> = ({ showNotification }) => {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <h2 className="text-4xl font-black mb-2 flex items-center gap-3">
-              {categories.find(c => c.id === category)?.label.split(' ')[1]} Feed
+              {queryFromUrl.length >= 2 ? 'Search Results' : `${categories.find(c => c.id === category)?.label.split(' ')[1]} Feed`}
               <span className="inline-flex items-center justify-center px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg text-xs font-black">
                 {articles.length}
               </span>
