@@ -446,5 +446,3 @@ export const NewsCard: React.FC<NewsCardProps> = ({
     </div>
   );
 };
-
-// commit-marker: 2
