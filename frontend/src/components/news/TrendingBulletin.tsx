@@ -82,9 +82,9 @@ export const TrendingBulletin: React.FC<TrendingBulletinProps> = ({ onError }) =
     >
       <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 dark:from-blue-700 dark:via-indigo-700 dark:to-purple-700 rounded-2xl overflow-hidden border border-indigo-400/30 dark:border-indigo-500/30 shadow-lg shadow-indigo-500/20">
         {/* Top bar with label and navigation */}
-        <div className="flex items-center justify-between px-4 py-2 bg-white/10 backdrop-blur-sm border-b border-white/20">
-          <div className="flex items-center gap-3">
-            <span className="flex items-center gap-2 px-3 py-1 bg-white text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 sm:py-2 gap-3 sm:gap-2 bg-white/10 backdrop-blur-sm border-b border-white/20">
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="flex items-center gap-2 px-3 py-1 bg-white text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm flex-shrink-0">
               <span className="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-pulse"></span>
               LIVE TRENDS
             </span>
@@ -93,17 +93,20 @@ export const TrendingBulletin: React.FC<TrendingBulletinProps> = ({ onError }) =
             </span>
           </div>
           
-          {/* Progress indicators */}
-          <div className="flex items-center gap-1.5">
-            {headlines.slice(0, 8).map((_, idx) => (
+          {/* Progress indicators - Glassmorphism Style */}
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap sm:flex-nowrap justify-start sm:justify-end">
+            {headlines.slice(0, 10).map((_, idx) => (
               <button
                 key={idx}
+                type="button"
+                aria-label={`Show headline ${idx + 1}`}
                 onClick={() => setActiveIndex(idx)}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  idx === activeIndex 
-                    ? 'bg-white w-6' 
-                    : 'bg-white/40 hover:bg-white/60 w-1.5'
+                className={`flex-shrink-0 h-3 rounded-full transition-all duration-300 focus:outline-none backdrop-blur-sm border ${
+                  idx === activeIndex
+                    ? 'w-8 bg-gradient-to-r from-white to-blue-100 shadow-lg shadow-white/50 ring-2 ring-white/40 border-white/60'
+                    : 'w-3 bg-purple-400/40 hover:bg-purple-300/60 ring-1 ring-white/20 border-white/10 hover:ring-white/30'
                 }`}
+                title={`Headline ${idx + 1}`}
               />
             ))}
           </div>
