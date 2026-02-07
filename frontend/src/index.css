@@ -97,21 +97,35 @@ button:focus-visible {
     background-color: #ffffff;
   }
 }
+/* ===============================
+   Trending Bulletin – FIXED
+   =============================== */
 
-/* Trending Bulletin Animations */
-@keyframes scroll-x {
-  0% {
-    transform: translateX(0);
+@keyframes ticker-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
   }
-  100% {
-    transform: translateX(-50%);
+  to {
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
+/* Base ticker */
 .animate-scroll-x {
-  animation: scroll-x 30s linear infinite;
+  display: flex;
+  width: max-content;            /* 🔥 CRITICAL FIX */
+  will-change: transform;
+  animation: ticker-scroll 90s linear infinite; /* 🔥 FASTER */
 }
 
+/* Pause on hover */
 .animate-scroll-x:hover {
   animation-play-state: paused;
+}
+
+/* Mobile: even faster */
+@media (max-width: 640px) {
+  .animate-scroll-x {
+    animation-duration: 10s;
+  }
 }
