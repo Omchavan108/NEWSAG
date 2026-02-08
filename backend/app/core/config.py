@@ -30,4 +30,13 @@ class Settings:
     # -----------------------------
     CACHE_TTL_NEWS: int = 60 * 15  # 15 minutes (DO NOT LOWER)
 
+    # -----------------------------
+    # OLLAMA LLM CONFIG (CHATBOT ONLY)
+    # -----------------------------
+    # NOTE: This LLM is ONLY for chatbot responses.
+    # Summarization and sentiment use separate ML services.
+    OLLAMA_BASE_URL: str = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    OLLAMA_MODEL: str = os.getenv("OLLAMA_MODEL", "llama3.2:1b")
+    OLLAMA_TIMEOUT: float = float(os.getenv("OLLAMA_TIMEOUT", "90"))  # seconds (allow headroom for larger context)
+
 settings = Settings()
