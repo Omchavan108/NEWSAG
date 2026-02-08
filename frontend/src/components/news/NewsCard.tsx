@@ -7,6 +7,7 @@ import { userService } from '../../services/user.service';
 import { Modal } from '../ui/Modal';
 import { CommentSection } from './commentSection';
 import { formatRelativeTime, getReadTimeText } from '../../utils/timeUtils';
+import { openChatWithArticle } from '../../utils/chatEvents';
 
 interface NewsCardProps {
   article: Article;
@@ -84,9 +85,9 @@ export const NewsCard: React.FC<NewsCardProps> = ({
   // ✅ List View Layout (Horizontal)
   if (viewType === 'list') {
     return (
-      <div className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-row">
-        {/* Image Section - Smaller for list */}
-        <div className="relative w-48 h-40 overflow-hidden flex-shrink-0">
+      <div className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col sm:flex-row">
+        {/* Image Section - Adaptive for small screens */}
+        <div className="relative w-full sm:w-48 h-48 sm:h-40 overflow-hidden flex-shrink-0">
           <img 
             src={article.image_url || `https://picsum.photos/seed/${article.title.length}/600/400`} 
             alt={article.title}
@@ -98,7 +99,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({
         </div>
 
         {/* Content Section */}
-        <div className="p-5 flex-grow flex flex-col">
+        <div className="p-4 sm:p-5 flex-grow flex flex-col">
           <div className="flex justify-between items-start mb-2">
             <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
               {article.source}
@@ -120,10 +121,11 @@ export const NewsCard: React.FC<NewsCardProps> = ({
           </p>
 
           <div className="mt-auto flex items-center justify-between">
-            <div className="flex gap-1">
+            <div className="flex gap-1 group/action relative">
+              <div className="absolute inset-0 rounded-xl bg-black/10 dark:bg-white/10 opacity-0 group-hover/action:opacity-100 transition-opacity duration-300 pointer-events-none" />
               <button 
                 onClick={toggleBookmark}
-                className={`p-2 rounded-full transition-all ${isBookmarked ? 'text-white bg-indigo-600 hover:bg-indigo-700' : 'text-slate-700 bg-white hover:bg-indigo-600 hover:text-white border border-slate-200 dark:border-slate-600'}`}
+                className={`p-2 rounded-full transition-all opacity-70 group-hover/action:opacity-100 ${isBookmarked ? 'text-white bg-indigo-600 hover:bg-indigo-700' : 'text-slate-700 bg-white hover:bg-indigo-600 hover:text-white border border-slate-200 dark:border-slate-600'}`}
                 title="Bookmark"
               >
                 <svg className="w-4 h-4" fill={isBookmarked ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
@@ -132,7 +134,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({
               </button>
               <button 
                 onClick={toggleReadLater}
-                className={`p-2 rounded-full transition-all ${isInReadLater ? 'text-white bg-indigo-600 hover:bg-indigo-700' : 'text-slate-700 bg-white hover:bg-indigo-600 hover:text-white border border-slate-200 dark:border-slate-600'}`}
+                className={`p-2 rounded-full transition-all opacity-70 group-hover/action:opacity-100 ${isInReadLater ? 'text-white bg-indigo-600 hover:bg-indigo-700' : 'text-slate-700 bg-white hover:bg-indigo-600 hover:text-white border border-slate-200 dark:border-slate-600'}`}
                 title="Read Later"
               >
                 <svg className="w-4 h-4" fill={isInReadLater ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
@@ -141,7 +143,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({
               </button>
               <button 
                 onClick={() => setIsCommentsOpen(true)}
-                className="p-2 rounded-full transition-all text-slate-700 bg-white hover:bg-indigo-600 hover:text-white border border-slate-200 dark:border-slate-600"
+                className="p-2 rounded-full transition-all opacity-70 group-hover/action:opacity-100 text-slate-700 bg-white hover:bg-indigo-600 hover:text-white border border-slate-200 dark:border-slate-600"
                 title="Comments"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -150,9 +152,18 @@ export const NewsCard: React.FC<NewsCardProps> = ({
               </button>
             </div>
             
-            <Button variant="ghost" size="sm" onClick={handleSummary} className="text-indigo-600 font-bold dark:text-indigo-400 text-xs">
-              ✨ AI Summary
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="ghost" size="sm" onClick={handleSummary} className="text-indigo-600 font-bold dark:text-indigo-400 text-xs opacity-70 group-hover/action:opacity-100">
+                ✨ AI Summary
+              </Button>
+              <button
+                onClick={() => openChatWithArticle(article.id, article.title)}
+                className="px-2 py-1 text-xs font-bold text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors opacity-70 group-hover/action:opacity-100"
+                title="Ask AI about this article"
+              >
+                🤖 Ask AI
+              </button>
+            </div>
           </div>
         </div>
 
@@ -265,7 +276,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({
   return (
     <div className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
       {/* Image Section */}
-      <div className="relative h-40 overflow-hidden">
+      <div className="relative h-56 overflow-hidden">
         <img 
           src={article.image_url || `https://picsum.photos/seed/${article.title.length}/600/400`} 
           alt={article.title}
@@ -302,10 +313,11 @@ export const NewsCard: React.FC<NewsCardProps> = ({
         </p>
 
         <div className="mt-auto pt-3 flex items-center justify-between border-t border-slate-50 dark:border-slate-700">
-          <div className="flex gap-1">
+          <div className="flex gap-1 group/action relative">
+            <div className="absolute inset-0 rounded-xl bg-black/10 dark:bg-white/10 opacity-0 group-hover/action:opacity-100 transition-opacity duration-300 pointer-events-none" />
             <button 
               onClick={toggleBookmark}
-              className={`p-2 rounded-full transition-all ${isBookmarked ? 'text-white bg-indigo-600 hover:bg-indigo-700' : 'text-slate-700 bg-white hover:bg-indigo-600 hover:text-white border border-slate-200 dark:border-slate-600'}`}
+              className={`p-2 rounded-full transition-all opacity-70 group-hover/action:opacity-100 ${isBookmarked ? 'text-white bg-indigo-600 hover:bg-indigo-700' : 'text-slate-700 bg-white hover:bg-indigo-600 hover:text-white border border-slate-200 dark:border-slate-600'}`}
               title="Bookmark"
             >
               <svg className="w-4 h-4" fill={isBookmarked ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
@@ -314,7 +326,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({
             </button>
             <button 
               onClick={toggleReadLater}
-              className={`p-2 rounded-full transition-all ${isInReadLater ? 'text-white bg-indigo-600 hover:bg-indigo-700' : 'text-slate-700 bg-white hover:bg-indigo-600 hover:text-white border border-slate-200 dark:border-slate-600'}`}
+              className={`p-2 rounded-full transition-all opacity-70 group-hover/action:opacity-100 ${isInReadLater ? 'text-white bg-indigo-600 hover:bg-indigo-700' : 'text-slate-700 bg-white hover:bg-indigo-600 hover:text-white border border-slate-200 dark:border-slate-600'}`}
               title="Read Later"
             >
               <svg className="w-4 h-4" fill={isInReadLater ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
@@ -323,7 +335,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({
             </button>
             <button 
               onClick={() => setIsCommentsOpen(true)}
-              className="p-2 rounded-full transition-all text-slate-700 bg-white hover:bg-indigo-600 hover:text-white border border-slate-200 dark:border-slate-600"
+              className="p-2 rounded-full transition-all opacity-70 group-hover/action:opacity-100 text-slate-700 bg-white hover:bg-indigo-600 hover:text-white border border-slate-200 dark:border-slate-600"
               title="Comments"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -332,9 +344,18 @@ export const NewsCard: React.FC<NewsCardProps> = ({
             </button>
           </div>
           
-          <Button variant="ghost" size="sm" onClick={handleSummary} className="text-indigo-600 font-bold dark:text-indigo-400 text-xs">
-            ✨ AI Summary
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="ghost" size="sm" onClick={handleSummary} className="text-indigo-600 font-bold dark:text-indigo-400 text-xs opacity-70 group-hover/action:opacity-100">
+              ✨ AI Summary
+            </Button>
+            <button
+              onClick={() => openChatWithArticle(article.id, article.title)}
+              className="px-2 py-1 text-xs font-bold text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors opacity-70 group-hover/action:opacity-100"
+              title="Ask AI about this article"
+            >
+              🤖 Ask AI
+            </button>
+          </div>
         </div>
       </div>
 
