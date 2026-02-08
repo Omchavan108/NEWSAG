@@ -6,6 +6,7 @@ from app.core.logging import configure_logging
 from app.core.indexes import create_indexes
 from app.core.cache import get_redis, close_redis
 from app.services.sentiment_ml import SentimentService, _load_model
+from app.services.chat_llm import chat_llm
 
 
 from app.routers import (
@@ -17,6 +18,7 @@ from app.routers import (
     read_laters,
     feedbacks,
     profile,
+    chatbot,
 )
 
 # --------------------------------------------------
@@ -68,6 +70,7 @@ app.include_router(bookmarks.router, prefix="/api/bookmarks", tags=["Bookmarks"]
 app.include_router(read_laters.router, prefix="/api/read-later", tags=["Read Later"])
 app.include_router(feedbacks.router, prefix="/api/feedback", tags=["Feedback"])
 app.include_router(profile.router, prefix="/api/profile", tags=["Profile"])
+app.include_router(chatbot.router, prefix="/api/chat", tags=["Chatbot"])
 
 logger = logging.getLogger(__name__)
 
@@ -88,6 +91,15 @@ async def startup_event():
         print("[SENTIMENT] ML model loaded successfully at startup")
     except Exception as exc:
         logger.warning("[SENTIMENT] Model preload failed; will use neutral fallback: %s", exc)
+    # ✅ Warm up Ollama so llama3.1:8b loads into memory (avoids cold-start on first chat)
+    try:
+        available = await chat_llm.is_available()
+        if available:
+            print(f"[OLLAMA] Connected to Ollama — model: {chat_llm.model}")
+        else:
+            print("[OLLAMA] Ollama not available; chatbot will use rule-based fallbacks")
+    except Exception as exc:
+        logger.warning("[OLLAMA] Warmup check failed; chatbot will use fallbacks: %s", exc)
 
 @app.on_event("shutdown")
 async def shutdown_event():
