@@ -9,9 +9,14 @@ interface TrendingBulletinProps {
 export const TrendingBulletin: React.FC<TrendingBulletinProps> = ({ onError }) => {
   const [headlines, setHeadlines] = useState<TrendingHeadline[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const onErrorRef = useRef(onError);
 
   // Change-detection ref (prevents unnecessary re-renders)
   const headlinesRef = useRef<TrendingHeadline[]>([]);
+
+  useEffect(() => {
+    onErrorRef.current = onError;
+  }, [onError]);
 
   useEffect(() => {
     let cancelled = false;
@@ -30,7 +35,7 @@ export const TrendingBulletin: React.FC<TrendingBulletinProps> = ({ onError }) =
         }
       } catch (err) {
         console.error('Trending headlines error:', err);
-        onError?.('Failed to load trending headlines');
+        onErrorRef.current?.('Failed to load trending headlines');
       } finally {
         if (!cancelled) setIsLoading(false);
       }
@@ -45,7 +50,7 @@ export const TrendingBulletin: React.FC<TrendingBulletinProps> = ({ onError }) =
       cancelled = true;
       clearInterval(interval);
     };
-  }, [onError]);
+  }, []);
 
   if (isLoading) {
     return (
