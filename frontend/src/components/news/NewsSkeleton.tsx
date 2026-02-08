@@ -3,7 +3,7 @@ import React from 'react';
 export const NewsSkeleton: React.FC = () => {
   return (
     <div className="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-700 animate-pulse">
-      <div className="h-48 bg-slate-200 dark:bg-slate-700"></div>
+      <div className="h-56 bg-slate-200 dark:bg-slate-700"></div>
       <div className="p-5 space-y-4">
         <div className="flex justify-between items-center">
           <div className="h-4 w-20 bg-slate-200 dark:bg-slate-700 rounded"></div>
