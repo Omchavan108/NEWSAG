@@ -451,6 +451,15 @@ def generate_article_qa_response(article: Optional[dict], question: str) -> str:
     if isinstance(sentiment, dict) and sentiment.get("label"):
         confidence = sentiment.get("confidence", 0)
         response += f"**Sentiment:** {sentiment['label']} ({int(confidence * 100)}% confidence)\n"
+
+    summary_text = (
+        article.get("summary")
+        or article.get("description")
+        or article.get("content")
+    )
+    if summary_text:
+        summary_snippet = summary_text.strip().replace("\n", " ")
+        response += f"\n**Summary:** {summary_snippet[:500]}"
     
     if url:
         response += f"\n[Read the full article]({url})"
