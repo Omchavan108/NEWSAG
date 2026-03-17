@@ -7,6 +7,10 @@ import logging
 from typing import Dict, Optional
 from threading import Lock
 import hashlib
+import os
+
+# Disable HuggingFace Hub auto-conversion to SafeTensors (fixes 504 timeout errors)
+os.environ["HF_HUB_DISABLE_SAFETENSORS_CONVERSION"] = "1"
 
 # Import cache functions for per-article sentiment caching
 from app.core.cache import get_from_cache, set_in_cache

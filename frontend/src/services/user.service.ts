@@ -24,7 +24,7 @@ export const userService = {
   },
   removeBookmark: async (id: string): Promise<void> => {
     try {
-      await api.delete(`/api/bookmarks/${id}/`);
+      await api.delete(`/api/bookmarks/${id}`);
     } catch (err) {
       throw new Error(getErrorMessage(err));
     }
@@ -52,7 +52,7 @@ export const userService = {
   },
   removeFromReadLater: async (id: string): Promise<void> => {
     try {
-      await api.delete(`/api/read-later/${id}/`);
+      await api.delete(`/api/read-later/${id}`);
     } catch (err) {
       throw new Error(getErrorMessage(err));
     }
