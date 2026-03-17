@@ -14,7 +14,7 @@ export const NewsGrid: React.FC<NewsGridProps> = ({ articles, isLoading, viewTyp
   if (isLoading) {
     return (
       <div className={viewType === 'grid' 
-        ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 animate-fade-in"
+        ? "grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-8 animate-fade-in"
         : "space-y-4 animate-fade-in"
       }>
         {[...Array(8)].map((_, i) => (
@@ -39,7 +39,7 @@ export const NewsGrid: React.FC<NewsGridProps> = ({ articles, isLoading, viewTyp
 
   return (
     <div className={viewType === 'grid'
-      ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 animate-fade-in"
+      ? "grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-8 animate-fade-in"
       : "space-y-4 animate-fade-in"
     }>
       {articles.map((article) => (

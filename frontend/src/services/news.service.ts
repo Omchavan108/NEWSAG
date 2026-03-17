@@ -12,6 +12,12 @@ export interface TrendingHeadline {
   category?: string;
 }
 
+export interface SuggestionResponse {
+  query: string;
+  count: number;
+  articles: Article[];
+}
+
 export const newsService = {
   // --------------------------------------------------
   // TRENDING HEADLINES (BULLETIN TICKER)
@@ -69,6 +75,20 @@ export const newsService = {
         url: url,
         content: content,          // Full article content when available
         description: description,  // GNews description fallback for paywalls
+      });
+      return response.data;
+    } catch (err) {
+      throw new Error(getErrorMessage(err));
+    }
+  },
+
+  // --------------------------------------------------
+  // SEARCH SUGGESTIONS (CACHE ONLY)
+  // --------------------------------------------------
+  getSuggestions: async (query: string): Promise<SuggestionResponse> => {
+    try {
+      const response = await api.get<SuggestionResponse>(`/api/news/suggestions`, {
+        params: { q: query }
       });
       return response.data;
     } catch (err) {

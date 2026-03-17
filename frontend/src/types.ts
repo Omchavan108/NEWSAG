@@ -49,6 +49,7 @@ export interface Bookmark {
   article_id: string;
   title: string;
   source: string;
+  category?: Topic;
   url: string;
   image_url?: string;
   created_at?: string;
@@ -59,6 +60,7 @@ export interface ReadLaterItem {
   article_id: string;
   title: string;
   source: string;
+  category?: Topic;
   url: string;
   image_url?: string;
   created_at?: string;

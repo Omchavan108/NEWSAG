@@ -90,8 +90,8 @@ export const Sidebar: React.FC = () => {
         {/* Left Icon Rail */}
         <div className="sidebar-left">
           <div className="sidebar-logo">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-600/30">
-              <span className="text-white font-black text-xl">A</span>
+              <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-600/30">
+              <span className="text-white font-black text-xl">NA</span>
             </div>
           </div>
 
@@ -307,18 +307,23 @@ export const Sidebar: React.FC = () => {
           top: -4px;
           right: -4px;
           font-size: 14px;
-          background: white;
+          background: rgb(248, 250, 252); /* subtle off-white for contrast */
+          border: 1px solid rgba(15,23,42,0.06);
           border-radius: 50%;
           width: 20px;
           height: 20px;
           display: flex;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          color: rgb(15,23,42); /* make emoji/text inside indicator dark in light mode */
+          font-weight: 700;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .dark .sidebar-active-indicator {
           background: rgb(30, 41, 59);
+          border-color: rgba(255,255,255,0.06);
+          color: white; /* keep white text in dark mode */
         }
 
         /* Tooltip */

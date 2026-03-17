@@ -6,7 +6,7 @@ import { Navbar } from '../components/layout/Navbar';
 import { Sidebar } from '../components/layout/Sidebar';
 import { Footer } from '../components/layout/Footer';
 import { Toast } from '../components/ui/Toast';
-import { FeedbackFAB } from '../components/ui/FeedbackFAB';
+import { ChatBot } from '../components/ui/ChatBot';
 import { useTheme } from '../hooks/useTheme';
 import { useNotification } from '../hooks/useNotification';
 import { setAuthToken } from '../services/api';
@@ -41,14 +41,13 @@ const AppLayout: React.FC<{ showNotification: (msg: string, type?: 'error' | 'su
 
       {!isAuthPage && <Sidebar />}
 
-      <main className={`flex-grow overflow-x-hidden ${isAuthPage ? '' : 'lg:pl-24'}`}>
+      <main className={`flex-grow overflow-x-hidden ${isAuthPage ? '' : 'lg:pl-28'}`}>
         <AppRouter showNotification={showNotification} />
       </main>
 
       <Footer />
       
-      <FeedbackFAB 
-        onSuccess={(msg) => showNotification(msg, 'success')}
+      <ChatBot 
         onError={(msg) => showNotification(msg, 'error')}
       />
     </div>

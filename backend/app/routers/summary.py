@@ -1,15 +1,22 @@
 import hashlib
-from fastapi import APIRouter, HTTPException
+from datetime import datetime
+from fastapi import APIRouter, HTTPException, Depends
 from app.core.cache import get_from_cache, set_in_cache
 from app.services.summarizer import TextSummarizer
 from app.services.text_utils import extract_article_text
+from app.core.auth import get_current_user_optional
+from app.core.database import get_db
 
 router = APIRouter()
 summarizer = TextSummarizer()
 
 
 @router.post("/")
-async def generate_summary(payload: dict):
+async def generate_summary(
+    payload: dict,
+    user=Depends(get_current_user_optional),
+    db=Depends(get_db),
+):
     """
     Summary rules:
     - News card → description (frontend)
@@ -28,6 +35,15 @@ async def generate_summary(payload: dict):
 
     cached = await get_from_cache(cache_key)
     if cached:
+        try:
+            await db.summary_logs.insert_one({
+                "user_id": user["user_id"],
+                "url": article_url,
+                "source": "cache",
+                "created_at": datetime.utcnow(),
+            })
+        except Exception:
+            pass
         return cached
 
     article_text = None
@@ -83,6 +99,16 @@ async def generate_summary(payload: dict):
         "source": source,
         "is_fallback": source != "generated",
     }
+
+    try:
+        await db.summary_logs.insert_one({
+            "user_id": user["user_id"],
+            "url": article_url,
+            "source": source,
+            "created_at": datetime.utcnow(),
+        })
+    except Exception:
+        pass
 
     await set_in_cache(cache_key, response)
 
